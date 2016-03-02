@@ -95,7 +95,7 @@ class Maze():
         '''Solves the maze and marks the path taken, returns true if the 
                 maze is solvable and False if not'''
         
-        if self.try_to_solve(self.start[1],self.start[0]):
+        if self.is_part_of_route_to_the_exit(self.start[1],self.start[0]):
             return True
         else:
             raise MazeUnsolvable('There is no solution to this maze.')
@@ -106,45 +106,48 @@ class Maze():
         if not self.the_maze[r][c]  == '1':
             self.the_maze[r][c] = mark
         
-    def try_to_solve(self,c,r):
+    def is_part_of_route_to_the_exit(self,c,r):
         '''Return True if maze can be solved from position (row, column),
         else return False.'''
         
         current_square = self.the_maze[r][c]
-        if current_square != '2':
-            d = {'x': False, '#': False, ' ': True, '2': True, '.': False, 
-                 '1': False}
-            #The dictionary is used to assign True or False depending on if
-            #the position in question is traversable.
-            
-            up = d[self.the_maze[r - 1][c]]
-            down = d[self.the_maze[r + 1][c]]
-            right = d[self.the_maze[r][c + 1]]
-            left = d[self.the_maze[r][c - 1]]
-            #Checks to see what is in the adjacent squares and is assigned 
-            #a value of True if it's a ' ' or a '2' and False if it's
-            #anything else.   
-            
-            self.mark_it(c,r,'.')
-            #Marks the current spot as traversed.
-            
-            if up and self.try_to_solve(c,r - 1):
-                return True     
-            if down and self.try_to_solve(c,r + 1):
-                return True
-            if left and self.try_to_solve(c - 1,r):
-                return True
-            if right and self.try_to_solve(c + 1,r):
-                return True
-            #Tries all the possible directions one at a time until it reaches
-            #the end of the maze.
-            
-            self.mark_it(c,r,'x')
-            return False
-            #This indicates it has tried all the traversable spots adjacent
-            #to it and it will now mark the spot 'x', having not led to the
-            #end of the maze.
+        if current_square == '2':
+            return True  #The current square is the exit.
+
+        #The dictionary is used to assign True or False depending on if
+        #the position in question is traversable.
+        is_spot_type_traversable_map = {
+            'x': False, '#': False, ' ': True, '2': True, '.': False,  '1': False
+        }
+
+        #Checks to see what is in the adjacent squares and is assigned 
+        #a value of True if it's a ' ' or a '2' and False if it's
+        #anything else. This indicates we can travel there and should
+        #try to reach the exit from there.
+        up = is_spot_type_traversable_map[self.the_maze[r - 1][c]]
+        down = is_spot_type_traversable_map[self.the_maze[r + 1][c]]
+        right = is_spot_type_traversable_map[self.the_maze[r][c + 1]]
+        left = is_spot_type_traversable_map[self.the_maze[r][c - 1]]
+
         
-        else:
+        #Marks the current spot as traversed.
+        self.mark_it(c,r,'.')
+        
+        if up and self.is_part_of_route_to_the_exit(c,r - 1):
+            return True     
+        if down and self.is_part_of_route_to_the_exit(c,r + 1):
             return True
-        #The current square is the exit.
+        if left and self.is_part_of_route_to_the_exit(c - 1,r):
+            return True
+        if right and self.is_part_of_route_to_the_exit(c + 1,r):
+            return True
+        #Tries all the possible directions one at a time until it reaches
+        #the end of the maze.
+        
+        self.mark_it(c,r,'x')
+        return False
+        #This indicates it has tried all the traversable spots adjacent
+        #to it and it will now mark the spot 'x', having not led to the
+        #end of the maze.
+    
+

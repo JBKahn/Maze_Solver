@@ -134,13 +134,11 @@ class Maze():
 
         # Try going in each direction and if we can reach the end from any
         # adjacent position then we can solve the maze from our current position.
-        if self.is_part_of_route_to_the_exit(column, row - 1):
-            return True
-        if self.is_part_of_route_to_the_exit(column, row + 1):
-            return True
-        if self.is_part_of_route_to_the_exit(column - 1, row):
-            return True
-        if self.is_part_of_route_to_the_exit(column + 1, row):
+        co_ordinates_to_try = [(column, row - 1), (column, row + 1), (column - 1, row), (column + 1, row)]
+        if any(map(
+            lambda coordinates: self.is_part_of_route_to_the_exit(*coordinates)
+            co_ordinates_to_try
+        )):
             return True
 
         # We tried all adjacent paths and didn't find the exit from here so we should

@@ -111,6 +111,7 @@ class Maze():
             self.the_maze[row][column] = mark
         else:
             # We mark it as an 's' to acknowledge we've seen the start position before
+            # and we want to keep it on the map.
             self.the_maze[row][column] = 's'
 
     def is_part_of_route_to_the_exit(self, column, row):
